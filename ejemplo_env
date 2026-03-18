@@ -1,0 +1,5 @@
+$env:SMTP_HOST="smtp.gmail.com"
+$env:SMTP_PORT="587"
+$env:SMTP_USER="correo@gmail.com"
+$env:SMTP_PASSWORD="app_password"
+$env:SMTP_TO="correo@gmail.com"

@@ -1,0 +1,126 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course Scheduler UC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body class="app-body">
+    <header class="app-header">
+        <div class="container d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <p class="app-kicker">Planificador académico</p>
+                <h1 class="app-title">Course Scheduler UC</h1>
+                <p class="app-subtitle">Organiza tu horario por bloques, valida conflictos y exporta tu calendario.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-light btn-sm" href="about">Sobre el sistema</a>
+                <a class="btn btn-light btn-sm" href="/cookie-guide">Guía de cookie</a>
+                <a class="btn btn-outline-light btn-sm" href="/auto">Horario automático</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container app-main">
+        <section class="card app-card">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-2">
+                <div>
+                    <h2 class="h5 mb-1">Actualizar cursos desde cookie</h2>
+                    <p class="text-muted mb-3">Conecta el portal académico para traer la oferta más reciente.</p>
+                </div>
+                <span class="app-pill">Paso 1</span>
+            </div>
+            <div class="row g-3">
+                <div class="col-12 col-lg-6">
+                    <label class="form-label">Cookie completa</label>
+                    <input id="cookieInput" class="form-control" placeholder="Pega tu cookie completa" />
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <label class="form-label">Periodo</label>
+                    <input id="termInput" class="form-control" value="202610" placeholder="Periodo (ej: 202610)" disabled />
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 d-grid align-self-end">
+                    <button id="scrapeBtn" class="btn btn-primary">Actualizar cursos</button>
+                </div>
+            </div>
+            <p id="scrapeMsg" class="text-muted mt-2 mb-0"></p>
+        </section>
+
+        <section class="card app-card">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                <div>
+                    <h2 class="h5 mb-1">Cursos disponibles</h2>
+                    <p class="text-muted mb-0">Elige las secciones por bloque A o B.</p>
+                </div>
+                <button id="reloadBtn" class="btn btn-outline-primary btn-sm">Recargar cursos</button>
+            </div>
+            <div id="coursesContainer" class="course-list"></div>
+        </section>
+
+        <section class="card app-card">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-2">
+                <div>
+                    <h2 class="h5 mb-1">Construir horario A/B</h2>
+                </div>
+                <span class="app-pill">Paso 2</span>
+            </div>
+            <button id="buildBtn" class="btn btn-primary mt-3">Construir horario</button>
+            <p id="buildMsg" class="text-muted mt-2 mb-0"></p>
+        </section>
+
+        <section class="card app-card">
+            <h2 class="h5 mb-3">Calendario semanal (Bloque A)</h2>
+            <div id="calendarA" class="calendar"></div>
+        </section>
+
+        <section class="card app-card">
+            <h2 class="h5 mb-3">Calendario semanal (Bloque B)</h2>
+            <div id="calendarB" class="calendar"></div>
+        </section>
+
+        <section class="card app-card">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-2">
+                <div>
+                <h2 class="h5 mb-1">Guardar y recuperar horarios</h2>
+                <p class="text-muted mb-0">Guarda versiones y exporta en PDF.</p>
+                </div>
+                <span class="app-pill">Paso 3</span>
+            </div>
+            <div class="row g-3 mt-1">
+                <div class="col-12 col-lg-6">
+                    <label class="form-label">Nombre del horario</label>
+                    <input id="scheduleName" class="form-control" placeholder="Nombre del horario (opcional)" />
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 d-grid align-self-end">
+                    <button id="saveScheduleBtn" class="btn btn-outline-primary">Guardar horario</button>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 d-grid align-self-end">
+                    <button id="exportPdfBtn" class="btn btn-outline-secondary">Exportar PDF</button>
+                </div>
+            </div>
+            <div class="row g-3 mt-1">
+                <div class="col-12 col-lg-6">
+                    <label class="form-label">Horarios guardados</label>
+                    <select id="savedSchedules" class="form-select"></select>
+                </div>
+                <div class="col-12 col-lg-3 d-grid align-self-end">
+                    <button id="loadScheduleBtn" class="btn btn-primary">Cargar horario</button>
+                </div>
+            </div>
+            <p id="saveMsg" class="text-muted mt-2 mb-0"></p>
+        </section>
+
+        <section class="card app-card">
+            <h2 class="h5 mb-3">Conflictos detectados</h2>
+            <pre id="conflictsOut">Sin conflictos</pre>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
