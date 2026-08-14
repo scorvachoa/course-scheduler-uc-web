@@ -47,8 +47,6 @@ def _wrap_text(text_value: str, font_name: str, font_size: int, max_width: float
     return lines
 
 
-
-
 def _normalize_day(day_value: str) -> str:
     value = str(day_value or "").strip()
     if not value:

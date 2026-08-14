@@ -2,5 +2,8 @@ __pycache__/
 *.pyc
 .venv/
 venv/
-data/*.json
+backend/data/*.json
+backend/data/sessions/
+backend/data/schedules/
+backend/data/exports/
 .env

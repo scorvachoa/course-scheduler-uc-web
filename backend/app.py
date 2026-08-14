@@ -1,8 +1,9 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from pathlib import Path
 from typing import List, Literal
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -14,6 +15,7 @@ from backend.emailer import send_contact_email
 from backend.services import (
     build_schedule_response,
     get_sections_for_course,
+    get_teachers,
     group_course_catalog,
     load_courses,
     list_saved_schedules,
@@ -68,6 +70,8 @@ class SaveScheduleRequest(BaseModel):
     selections_a: List[SelectedSection] = Field(default_factory=list)
     selections_b: List[SelectedSection] = Field(default_factory=list)
 
+load_dotenv()
+
 app = FastAPI(title="Course Scheduler UC - Web API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
@@ -89,6 +93,12 @@ def health() -> dict:
 def list_courses(session_id: str | None = None) -> dict:
     courses = load_courses(session_id=session_id)
     return {"items": group_course_catalog(courses), "count": len(courses)}
+
+
+@app.get("/api/teachers")
+def list_teachers(session_id: str | None = None) -> dict:
+    courses = load_courses(session_id=session_id)
+    return {"items": get_teachers(courses)}
 
 
 @app.get("/api/courses/{course_key}/sections")
@@ -259,9 +269,14 @@ def contact(payload: ContactRequest) -> dict:
 
 @app.get("/auto")
 def auto_page() -> FileResponse:
-    return FileResponse(FRONTEND_DIR / "auto.html")
+    return FileResponse(FRONTEND_DIR / "index.html")
+
+
+@app.get("/teachers")
+def teachers_page() -> FileResponse:
+    return FileResponse(FRONTEND_DIR / "teachers.html")
+
 
 @app.get("/")
 def home() -> FileResponse:
-    return FileResponse(FRONTEND_DIR / "index.html")
     return FileResponse(FRONTEND_DIR / "index.html")

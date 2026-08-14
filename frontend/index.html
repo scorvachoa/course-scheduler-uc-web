@@ -4,123 +4,765 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Course Scheduler UC</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='6' width='24' height='22' rx='3' fill='none' stroke='%232563eb' stroke-width='2'/%3E%3Cpath d='M4 12h24' stroke='%232563eb' stroke-width='2'/%3E%3Ccircle cx='11' cy='18' r='1.5' fill='%232563eb'/%3E%3Ccircle cx='11' cy='22' r='1.5' fill='%232563eb'/%3E%3Ccircle cx='16' cy='18' r='1.5' fill='%232563eb'/%3E%3Ccircle cx='16' cy='22' r='1.5' fill='%232563eb'/%3E%3Ccircle cx='21' cy='18' r='1.5' fill='%232563eb'/%3E%3Ccircle cx='21' cy='22' r='1.5' fill='%232563eb'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body class="app-body">
-    <header class="app-header">
+    <header class="app-header app-header--compact">
         <div class="container d-flex flex-wrap align-items-center justify-content-between gap-3">
             <div>
                 <p class="app-kicker">Planificador académico</p>
                 <h1 class="app-title">Course Scheduler UC</h1>
                 <p class="app-subtitle">Organiza tu horario por bloques, valida conflictos y exporta tu calendario.</p>
             </div>
-            <div class="d-flex gap-2">
-                <a class="btn btn-outline-light btn-sm" href="about">Sobre el sistema</a>
-                <a class="btn btn-light btn-sm" href="/cookie-guide">Guía de cookie</a>
-                <a class="btn btn-outline-light btn-sm" href="/auto">Horario automático</a>
-            </div>
+            <button type="button" id="themeToggleBtn" class="theme-btn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
+                <i class="bi bi-moon-stars"></i>
+            </button>
+        </div>
+        <div class="container mt-3">
+            <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab-about-btn" data-bs-toggle="tab" data-bs-target="#tab-about" type="button" role="tab">Acerca de</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-wizard-btn" data-bs-toggle="tab" data-bs-target="#tab-wizard" type="button" role="tab">Planificador</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-auto-btn" data-bs-toggle="tab" data-bs-target="#tab-auto" type="button" role="tab">Automático</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-teachers-btn" data-bs-toggle="tab" data-bs-target="#tab-teachers" type="button" role="tab">Docentes</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-guide-btn" data-bs-toggle="tab" data-bs-target="#tab-guide" type="button" role="tab">Guía cookie</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-updatecookie-btn" type="button" role="tab">Actualizar cookie</button>
+                </li>
+            </ul>
         </div>
     </header>
 
-    <main class="container app-main">
-        <section class="card app-card">
-            <div class="d-flex flex-column flex-lg-row justify-content-between gap-2">
-                <div>
-                    <h2 class="h5 mb-1">Actualizar cursos desde cookie</h2>
-                    <p class="text-muted mb-3">Conecta el portal académico para traer la oferta más reciente.</p>
+    <main class="container app-main tab-content">
+
+        <!-- ========== TAB: ACERCA DE (inicio) ========== -->
+        <div class="tab-pane fade show active" id="tab-about" role="tabpanel">
+            <section class="card app-card app-card--accent mb-3">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                    <div>
+                        <div class="app-pill mb-2">Herramienta académica</div>
+                        <h2 class="h4 mb-2">¿Qué es Course Scheduler UC?</h2>
+                        <p class="text-muted mb-0" style="max-width:760px;">
+                            Una herramienta web para organizar tus horarios académicos en la UC a partir de la oferta
+                            oficial del Portal del Estudiante. Trae tus cursos con tu cookie, arma tu plan por bloques
+                            A/B, detecta conflictos de horario automáticamente y visualiza + exporta tu calendario
+                            semanal antes de tomar decisiones. También puedes consultar los <strong>docentes</strong>
+                            que imparten cada curso y su horario.
+                        </p>
+                        <div class="d-flex flex-wrap gap-4 mt-3 text-muted small">
+                            <span><i class="bi bi-layers me-1 text-primary"></i>Bloques A y B</span>
+                            <span><i class="bi bi-lightning-charge me-1 text-primary"></i>Detección de conflictos</span>
+                            <span><i class="bi bi-incognito me-1 text-primary"></i>Sin registro ni uso de terceros</span>
+                        </div>
+                    </div>
                 </div>
-                <span class="app-pill">Paso 1</span>
-            </div>
-            <div class="row g-3">
-                <div class="col-12 col-lg-6">
-                    <label class="form-label">Cookie completa</label>
-                    <input id="cookieInput" class="form-control" placeholder="Pega tu cookie completa" />
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button type="button" class="btn btn-primary" id="goToPlanifierBtn"><i class="bi bi-rocket-takeoff me-1"></i>Empezar a planificar</button>
+                    <button type="button" class="btn btn-outline-primary" id="goToTeachersBtn"><i class="bi bi-people me-1"></i>Ver docentes</button>
+                    <button type="button" class="btn btn-outline-primary" id="goToGuideBtn"><i class="bi bi-info-circle me-1"></i>Ver guía de la cookie</button>
+                </div>
+            </section>
+
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card app-card h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-cloud-download"></i></div>
+                        <div class="app-pill mb-2">Paso 1</div>
+                        <h3 class="h6 mb-1">Carga tus cursos</h3>
+                        <p class="text-muted small mb-0">Copia la cookie de tu Portal del Estudiante y trae la oferta del periodo automáticamente.</p>
+                    </div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
-                    <label class="form-label">Periodo</label>
-                    <input id="termInput" class="form-control" value="202610" placeholder="Periodo (ej: 202610)" disabled />
+                    <div class="card app-card h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-list-check"></i></div>
+                        <div class="app-pill mb-2">Paso 2</div>
+                        <h3 class="h6 mb-1">Elige NRC por bloque</h3>
+                        <p class="text-muted small mb-0">Selecciona cursos en los bloques A y B viendo en vivo las horas y créditos.</p>
+                    </div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-3 d-grid align-self-end">
-                    <button id="scrapeBtn" class="btn btn-primary">Actualizar cursos</button>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card app-card h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-lightning-charge"></i></div>
+                        <div class="app-pill mb-2">Paso 3</div>
+                        <h3 class="h6 mb-1">Valida conflictos</h3>
+                        <p class="text-muted small mb-0">Detecta choques de día y hora entre cursos automáticamente, incluso con varios horarios por curso.</p>
+                    </div>
                 </div>
-            </div>
-            <p id="scrapeMsg" class="text-muted mt-2 mb-0"></p>
-        </section>
-
-        <section class="card app-card">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                <div>
-                    <h2 class="h5 mb-1">Cursos disponibles</h2>
-                    <p class="text-muted mb-0">Elige las secciones por bloque A o B.</p>
-                </div>
-                <button id="reloadBtn" class="btn btn-outline-primary btn-sm">Recargar cursos</button>
-            </div>
-            <div id="coursesContainer" class="course-list"></div>
-        </section>
-
-        <section class="card app-card">
-            <div class="d-flex flex-column flex-lg-row justify-content-between gap-2">
-                <div>
-                    <h2 class="h5 mb-1">Construir horario A/B</h2>
-                </div>
-                <span class="app-pill">Paso 2</span>
-            </div>
-            <button id="buildBtn" class="btn btn-primary mt-3">Construir horario</button>
-            <p id="buildMsg" class="text-muted mt-2 mb-0"></p>
-        </section>
-
-        <section class="card app-card">
-            <h2 class="h5 mb-3">Calendario semanal (Bloque A)</h2>
-            <div id="calendarA" class="calendar"></div>
-        </section>
-
-        <section class="card app-card">
-            <h2 class="h5 mb-3">Calendario semanal (Bloque B)</h2>
-            <div id="calendarB" class="calendar"></div>
-        </section>
-
-        <section class="card app-card">
-            <div class="d-flex flex-column flex-lg-row justify-content-between gap-2">
-                <div>
-                <h2 class="h5 mb-1">Guardar y recuperar horarios</h2>
-                <p class="text-muted mb-0">Guarda versiones y exporta en PDF.</p>
-                </div>
-                <span class="app-pill">Paso 3</span>
-            </div>
-            <div class="row g-3 mt-1">
-                <div class="col-12 col-lg-6">
-                    <label class="form-label">Nombre del horario</label>
-                    <input id="scheduleName" class="form-control" placeholder="Nombre del horario (opcional)" />
-                </div>
-                <div class="col-12 col-md-6 col-lg-3 d-grid align-self-end">
-                    <button id="saveScheduleBtn" class="btn btn-outline-primary">Guardar horario</button>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3 d-grid align-self-end">
-                    <button id="exportPdfBtn" class="btn btn-outline-secondary">Exportar PDF</button>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card app-card h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-file-earmark-pdf"></i></div>
+                        <div class="app-pill mb-2">Paso 4</div>
+                        <h3 class="h6 mb-1">Exporta tu horario</h3>
+                        <p class="text-muted small mb-0">Guarda tu horario por sesión y descárgalo en PDF o JSON.</p>
+                    </div>
                 </div>
             </div>
-            <div class="row g-3 mt-1">
-                <div class="col-12 col-lg-6">
-                    <label class="form-label">Horarios guardados</label>
-                    <select id="savedSchedules" class="form-select"></select>
+
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6">
+                    <div class="card app-card h-100">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <div class="feature-icon feature-icon--lg"><i class="bi bi-people"></i></div>
+                            <div>
+                                <div class="app-pill mb-1">Directorio de docentes</div>
+                                <h3 class="h6 mb-0">Consulta docentes y sus cursos</h3>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-0">Busca por nombre del docente o por curso para ver quién lo imparte, su NRC, bloque y horario.</p>
+                    </div>
                 </div>
-                <div class="col-12 col-lg-3 d-grid align-self-end">
-                    <button id="loadScheduleBtn" class="btn btn-primary">Cargar horario</button>
+                <div class="col-12 col-md-6">
+                    <div class="card app-card h-100">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <div class="feature-icon feature-icon--lg"><i class="bi bi-magic"></i></div>
+                            <div>
+                                <div class="app-pill mb-1">Generador automático</div>
+                                <h3 class="h6 mb-0">Arma horarios con un clic</h3>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-0">Define objetivos de créditos y días permitidos y deja que la app proponga horarios sin conflictos.</p>
+                    </div>
                 </div>
             </div>
-            <p id="saveMsg" class="text-muted mt-2 mb-0"></p>
-        </section>
 
-        <section class="card app-card">
-            <h2 class="h5 mb-3">Conflictos detectados</h2>
-            <pre id="conflictsOut">Sin conflictos</pre>
-        </section>
+            <div class="card app-card">
+                <h3 class="h6 mb-2">Consejos rápidos</h3>
+                <ul class="list-check mb-0">
+                    <li>Tu cookie expira: si al cargar falla, vuelve a copiarla desde el portal.</li>
+                    <li>Puedes usar el generador <strong>Automático</strong> para buscar horarios por créditos y días.</li>
+                    <li>El generador se guarda por sesión en tu navegador: no es necesario registrarse.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ========== TAB: PLANIFICADOR (WIZARD) ========== -->
+        <div class="tab-pane fade" id="tab-wizard" role="tabpanel">
+
+            <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999">
+                <div id="wizardToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div id="wizardToastBody" class="toast-body"></div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stepper">
+                <div class="stepper-step active" data-wizard="1">
+                    <div class="stepper-badge" data-badge="1">1</div>
+                    <span>Cursos</span>
+                </div>
+                <div class="stepper-line"></div>
+                <div class="stepper-step" data-wizard="2">
+                    <div class="stepper-badge" data-badge="2">2</div>
+                    <span>Selección</span>
+                </div>
+                <div class="stepper-line"></div>
+                <div class="stepper-step" data-wizard="3">
+                    <div class="stepper-badge" data-badge="3">3</div>
+                    <span>Horario</span>
+                </div>
+                <div class="stepper-line"></div>
+                <div class="stepper-step" data-wizard="4">
+                    <div class="stepper-badge" data-badge="4">4</div>
+                    <span>Exportar</span>
+                </div>
+            </div>
+
+            <!-- Step panel 1: Cursos (scrape) -->
+            <div class="wizard-panel" data-wizard="1">
+                <div id="coursesEmptyState" class="card app-card app-card--accent d-flex flex-column flex-lg-row align-items-lg-center gap-3 mb-3 d-none">
+                    <div class="flex-grow-1">
+                        <h2 class="h5 mb-1">Necesitas tu cookie para empezar</h2>
+                        <p class="text-muted mb-0">Pega la cookie de tu Portal del Estudiante para traer los cursos del periodo.</p>
+                    </div>
+                    <div class="d-grid d-lg-block">
+                        <button id="openCourseModalBtn" class="btn btn-primary">Cargar cursos</button>
+                    </div>
+                </div>
+
+                <section id="savedSchedulesSection" class="card app-card d-none">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                        <div>
+                            <h2 class="h5 mb-1">Horarios guardados</h2>
+                            <p class="text-muted mb-0">Carga un horario previamente guardado.</p>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-9">
+                            <select id="savedSchedulesStep1" class="form-select"></select>
+                        </div>
+                        <div class="col-12 col-lg-3 d-grid">
+                            <button id="loadScheduleStep1Btn" class="btn btn-outline-primary">Cargar horario</button>
+                        </div>
+                    </div>
+                    <p id="loadScheduleStep1Msg" class="text-muted mt-2 mb-0"></p>
+                </section>
+
+                <section class="card app-card">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                        <div>
+                            <h2 class="h5 mb-1">Cursos disponibles</h2>
+                            <p class="text-muted mb-0">Vista previa de los cursos obtenidos.</p>
+                        </div>
+                        <button id="reloadBtn" class="btn btn-outline-primary btn-sm">Recargar</button>
+                    </div>
+                    <div id="coursesContainer" class="course-list">
+                        <div class="skeleton-list">
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                            <div class="skeleton-row"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <button id="wizardToStep2" class="btn btn-primary" disabled><i class="bi bi-arrow-right ms-1"></i></button>
+                </div>
+            </div>
+
+            <!-- Step panel 2: Selección -->
+            <div class="wizard-panel d-none" data-wizard="2">
+                <section class="card app-card">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-2 mb-3">
+                        <div>
+                            <h2 class="h5 mb-1">Seleccionar cursos por bloque</h2>
+                            <p class="text-muted mb-0">Elige un bloque (A o B) y un NRC para cada curso.</p>
+                        </div>
+                    </div>
+                    <div id="creditSummary" class="d-flex flex-wrap gap-3 mb-3 p-3 rounded-3 small">
+                        <span>Bloque A: <strong id="creditSummaryA" class="text-primary">0</strong> cr</span>
+                        <span>Bloque B: <strong id="creditSummaryB" class="text-warning-emphasis">0</strong> cr</span>
+                        <span class="fw-bold">Total: <strong id="creditSummaryTotal">0</strong> cr</span>
+                        <span class="ms-auto"><strong id="selectionProgress">0 de 0</strong> cursos seleccionados</span>
+                    </div>
+                    <div id="coursesContainer2" class="course-list"></div>
+                    <p id="buildMsg" class="text-muted mt-2 mb-0"></p>
+                </section>
+
+                <section class="card app-card">
+                    <ul class="nav nav-tabs nav-tabs-schedule mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-previewA-btn" data-bs-toggle="tab" data-bs-target="#tab-previewA" type="button" role="tab">Bloque A</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-previewB-btn" data-bs-toggle="tab" data-bs-target="#tab-previewB" type="button" role="tab">Bloque B</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tab-previewA" role="tabpanel">
+                            <div id="calendarPreviewA" class="calendar"></div>
+                        </div>
+                        <div class="tab-pane fade" id="tab-previewB" role="tabpanel">
+                            <div id="calendarPreviewB" class="calendar"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="step2Conflicts"></div>
+
+                <div class="d-flex justify-content-between mt-3 wizard-actions">
+                    <button class="btn btn-outline-secondary wizard-back" data-wizard-target="1"><i class="bi bi-arrow-left me-1"></i>Cambiar cursos</button>
+                    <button id="buildBtn" class="btn btn-primary" disabled>Construir horario <i class="bi bi-arrow-right ms-1"></i></button>
+                </div>
+            </div>
+
+            <!-- Step panel 3: Horario -->
+            <div class="wizard-panel d-none" data-wizard="3">
+                <div class="row g-3 mb-3" id="scheduleSummaryCards">
+                    <div class="col-12 col-lg-4">
+                        <div class="summary-card summary-card-a">
+                            <div class="summary-card-label">Bloque A</div>
+                            <div class="summary-card-value" id="summaryCoursesA">0</div>
+                            <div class="summary-card-sub">cursos</div>
+                            <div class="summary-card-credits" id="summaryCreditsA">0 créditos</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="summary-card summary-card-b">
+                            <div class="summary-card-label">Bloque B</div>
+                            <div class="summary-card-value" id="summaryCoursesB">0</div>
+                            <div class="summary-card-sub">cursos</div>
+                            <div class="summary-card-credits" id="summaryCreditsB">0 créditos</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="summary-card summary-card-total">
+                            <div class="summary-card-label">Total</div>
+                            <div class="summary-card-value" id="summaryCoursesTotal">0</div>
+                            <div class="summary-card-sub">cursos</div>
+                            <div class="summary-card-credits" id="summaryCreditsTotal">0 créditos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="card app-card">
+                    <ul class="nav nav-tabs nav-tabs-schedule mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-blockA-btn" data-bs-toggle="tab" data-bs-target="#tab-blockA" type="button" role="tab">Bloque A</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-blockB-btn" data-bs-toggle="tab" data-bs-target="#tab-blockB" type="button" role="tab">Bloque B</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tab-blockA" role="tabpanel">
+                            <div id="calendarA" class="calendar"></div>
+                        </div>
+                        <div class="tab-pane fade" id="tab-blockB" role="tabpanel">
+                            <div id="calendarB" class="calendar"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="step3Conflicts"></div>
+
+                <div class="d-flex justify-content-between mt-3 wizard-actions">
+                    <button class="btn btn-outline-secondary wizard-back" data-wizard-target="2"><i class="bi bi-arrow-left me-1"></i>Volver a selección</button>
+                    <button id="wizardToStep4" class="btn btn-primary">Ir a exportar <i class="bi bi-arrow-right ms-1"></i></button>
+                </div>
+            </div>
+
+            <!-- Step panel 4: Exportar -->
+            <div class="wizard-panel d-none" data-wizard="4">
+                <section class="card app-card export-card">
+                    <div class="export-head">
+                        <div class="export-emoji"><i class="bi bi-calendar-check"></i></div>
+                        <h4>¡Horario listo!</h4>
+                        <p class="text-muted">Descarga tu horario o guárdalo para verlo después.</p>
+                    </div>
+
+                    <div class="row g-3 text-center" id="exportSummary">
+                        <div class="col-4">
+                            <div class="export-stat">
+                                <div class="export-stat-label">Cursos</div>
+                                <div class="export-stat-value" id="exportCourses">0</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="export-stat">
+                                <div class="export-stat-label">Créditos</div>
+                                <div class="export-stat-value" id="exportCredits">0</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="export-stat">
+                                <div class="export-stat-label">Bloques</div>
+                                <div class="export-stat-value" id="exportBlocks">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card app-card">
+                    <div class="row g-3 export-actions">
+                        <div class="col-12 col-md-6 d-grid">
+                            <button id="exportPdfBtn" class="btn btn-primary btn-lg">
+                                <i class="bi bi-file-earmark-pdf me-1"></i>Descargar PDF
+                            </button>
+                        </div>
+                        <div class="col-12 col-md-6 d-grid">
+                            <button id="exportJsonBtn" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-filetype-json me-1"></i>JSON
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card app-card export-save">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-12 col-md-8">
+                            <label class="form-label" for="scheduleName">Nombre del horario</label>
+                            <input id="scheduleName" class="form-control" placeholder="Nombre (opcional)" />
+                        </div>
+                        <div class="col-12 col-md-4 d-grid">
+                            <button id="saveScheduleBtn" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-save me-1"></i>Guardar horario
+                            </button>
+                        </div>
+                    </div>
+                    <p id="saveMsg" class="text-muted mt-2 mb-0"></p>
+                </section>
+
+                <div class="d-flex justify-content-between mt-3 wizard-actions">
+                    <button class="btn btn-outline-secondary wizard-back" data-wizard-target="3"><i class="bi bi-arrow-left me-1"></i>Volver a horario</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== TAB: AUTOMÁTICO ========== -->
+        <div class="tab-pane fade" id="tab-auto" role="tabpanel">
+
+            <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999">
+                <div id="autoToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div id="autoToastBody" class="toast-body"></div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stepper">
+                <div class="stepper-step active" data-auto-wizard="1">
+                    <div class="stepper-badge" data-badge="1">1</div>
+                    <span>Preferencias</span>
+                </div>
+                <div class="stepper-line"></div>
+                <div class="stepper-step" data-auto-wizard="2">
+                    <div class="stepper-badge" data-badge="2">2</div>
+                    <span>Resultado</span>
+                </div>
+                <div class="stepper-line"></div>
+                <div class="stepper-step" data-auto-wizard="3">
+                    <div class="stepper-badge" data-badge="3">3</div>
+                    <span>Calendario</span>
+                </div>
+                <div class="stepper-line"></div>
+                <div class="stepper-step" data-auto-wizard="4">
+                    <div class="stepper-badge" data-badge="4">4</div>
+                    <span>Exportar</span>
+                </div>
+            </div>
+
+            <!-- Step panel 1: Preferencias -->
+            <div class="wizard-panel" data-auto-wizard="1">
+                <section class="card app-card app-card--accent">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-2">
+                        <div>
+                            <h2 class="h5 mb-1">Preferencias</h2>
+                            <p class="text-muted mb-0">Selecciona los cursos y días para generar un horario automáticamente.</p>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-2">
+                        <div class="col-12">
+                            <label class="form-label">Días permitidos</label>
+                            <div id="autoDays" class="auto-days"></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Cursos a considerar</label>
+                            <input id="autoSearch" class="form-control mb-2" placeholder="Buscar curso..." />
+                            <div id="autoCourses" class="auto-courses"></div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <label class="form-label">Objetivo</label>
+                            <div class="auto-meta">12 créditos por bloque A y 12 por bloque B</div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="form-check mt-4">
+                                <input id="autoAllowLess" class="form-check-input" type="checkbox" checked />
+                                <label class="form-check-label" for="autoAllowLess">Permitir menor a 12 si no hay exacto</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <button id="autoGenerateBtn" class="btn btn-primary">Generar horario automático</button>
+                    </div>
+                    <p id="autoStatus" class="text-muted mt-2 mb-0">Pendiente</p>
+                </section>
+            </div>
+
+            <!-- Step panel 2: Resultado -->
+            <div class="wizard-panel d-none" data-auto-wizard="2">
+                <div id="autoCreditSummary" class="d-flex flex-wrap gap-3 mb-3 p-3 rounded-3 small">
+                    <span>Bloque A: <strong id="autoCreditSummaryA" class="text-primary">0</strong> cr</span>
+                    <span>Bloque B: <strong id="autoCreditSummaryB" class="text-warning-emphasis">0</strong> cr</span>
+                    <span class="fw-bold">Total: <strong id="autoCreditSummaryTotal">0</strong> cr</span>
+                    <span class="ms-auto"><strong id="autoCoursesGenerated">0</strong> cursos generados</span>
+                </div>
+                <section class="card app-card">
+                    <h2 class="h5 mb-3">Horario generado</h2>
+                    <div id="autoResultSummary" class="alert alert-success d-none align-items-center gap-2 py-2 px-3 mb-3" role="alert">
+                        <span><i class="bi bi-check-circle"></i></span>
+                        <span id="autoResultText" class="flex-grow-1">Horario encontrado.</span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-6">
+                            <div class="auto-result">
+                                <h3 class="h6">Bloque A</h3>
+                                <ul id="autoListA" class="list-check"></ul>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="auto-result">
+                                <h3 class="h6">Bloque B</h3>
+                                <ul id="autoListB" class="list-check"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="d-flex justify-content-between mt-3 wizard-actions">
+                    <button class="btn btn-outline-secondary auto-wizard-back" data-auto-target="1"><i class="bi bi-arrow-left me-1"></i>Preferencias</button>
+                    <button id="autoToStep3" class="btn btn-primary" disabled>Ver calendario <i class="bi bi-arrow-right ms-1"></i></button>
+                </div>
+            </div>
+
+            <!-- Step panel 3: Calendario -->
+            <div class="wizard-panel d-none" data-auto-wizard="3">
+                <div class="row g-3 mb-3" id="autoScheduleSummaryCards">
+                    <div class="col-12 col-lg-4">
+                        <div class="summary-card summary-card-a">
+                            <div class="summary-card-label">Bloque A</div>
+                            <div class="summary-card-value" id="autoSummaryCoursesA">0</div>
+                            <div class="summary-card-sub">cursos</div>
+                            <div class="summary-card-credits" id="autoSummaryCreditsA">0 créditos</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="summary-card summary-card-b">
+                            <div class="summary-card-label">Bloque B</div>
+                            <div class="summary-card-value" id="autoSummaryCoursesB">0</div>
+                            <div class="summary-card-sub">cursos</div>
+                            <div class="summary-card-credits" id="autoSummaryCreditsB">0 créditos</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="summary-card summary-card-total">
+                            <div class="summary-card-label">Total</div>
+                            <div class="summary-card-value" id="autoSummaryCoursesTotal">0</div>
+                            <div class="summary-card-sub">cursos</div>
+                            <div class="summary-card-credits" id="autoSummaryCreditsTotal">0 créditos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="card app-card">
+                    <ul class="nav nav-tabs nav-tabs-schedule mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-autoBlockA-btn" data-bs-toggle="tab" data-bs-target="#tab-autoBlockA" type="button" role="tab">Bloque A</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-autoBlockB-btn" data-bs-toggle="tab" data-bs-target="#tab-autoBlockB" type="button" role="tab">Bloque B</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tab-autoBlockA" role="tabpanel">
+                            <div id="autoCalendarA" class="calendar"></div>
+                        </div>
+                        <div class="tab-pane fade" id="tab-autoBlockB" role="tabpanel">
+                            <div id="autoCalendarB" class="calendar"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="d-flex justify-content-between mt-3 wizard-actions">
+                    <button class="btn btn-outline-secondary auto-wizard-back" data-auto-target="2"><i class="bi bi-arrow-left me-1"></i>Volver a resultado</button>
+                    <button id="autoToStep4" class="btn btn-primary">Ir a exportar <i class="bi bi-arrow-right ms-1"></i></button>
+                </div>
+            </div>
+
+            <!-- Step panel 4: Exportar -->
+            <div class="wizard-panel d-none" data-auto-wizard="4">
+                <section class="card app-card export-card">
+                    <div class="export-head">
+                        <div class="export-emoji"><i class="bi bi-calendar-check"></i></div>
+                        <h4>¡Horario listo!</h4>
+                        <p class="text-muted">Descarga tu horario o guárdalo para verlo después.</p>
+                    </div>
+
+                    <div class="row g-3 text-center" id="autoExportSummary">
+                        <div class="col-4">
+                            <div class="export-stat">
+                                <div class="export-stat-label">Cursos</div>
+                                <div class="export-stat-value" id="autoExportCourses">0</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="export-stat">
+                                <div class="export-stat-label">Créditos</div>
+                                <div class="export-stat-value" id="autoExportCredits">0</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="export-stat">
+                                <div class="export-stat-label">Bloques</div>
+                                <div class="export-stat-value" id="autoExportBlocks">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="card app-card">
+                    <div class="row g-3 export-actions">
+                        <div class="col-12 col-md-6 d-grid">
+                            <button id="autoExportPdfBtn" class="btn btn-primary btn-lg">
+                                <i class="bi bi-file-earmark-pdf me-1"></i>Descargar PDF
+                            </button>
+                        </div>
+                        <div class="col-12 col-md-6 d-grid">
+                            <button id="autoExportJsonBtn" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-filetype-json me-1"></i>JSON
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                <section class="card app-card export-save">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-12 col-md-8">
+                            <label class="form-label" for="autoScheduleName">Nombre del horario</label>
+                            <input id="autoScheduleName" class="form-control" placeholder="Nombre (opcional)" />
+                        </div>
+                        <div class="col-12 col-md-4 d-grid">
+                            <button id="autoSaveBtn" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-save me-1"></i>Guardar horario
+                            </button>
+                        </div>
+                    </div>
+                    <p id="autoSaveMsg" class="text-muted mt-2 mb-0"></p>
+                </section>
+                <div class="d-flex justify-content-between mt-3 wizard-actions">
+                    <button class="btn btn-outline-secondary auto-wizard-back" data-auto-target="3"><i class="bi bi-arrow-left me-1"></i>Volver a calendario</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== TAB: DOCENTES ========== -->
+        <div class="tab-pane fade" id="tab-teachers" role="tabpanel">
+            <section class="card app-card">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <div>
+                        <h2 class="h5 mb-1">Buscar docente o curso</h2>
+                        <p class="text-muted mb-0">Filtra por nombre del docente.</p>
+                    </div>
+                </div>
+                <input id="teacherSearch" class="form-control" placeholder="Busca por docente o por curso..." />
+            </section>
+
+            <section class="card app-card">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <h2 class="h5 mb-0">Listado de docentes</h2>
+                    <span id="teacherCount" class="text-muted small"></span>
+                </div>
+                <div id="teachersContainer">
+                    <div class="skeleton-list">
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                        <div class="skeleton-row"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ========== TAB: GUÍA COOKIE ========== -->
+        <div class="tab-pane fade" id="tab-guide" role="tabpanel">
+            <section class="card app-card">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-2 mb-3">
+                    <div>
+                        <h2 class="h5 mb-1">Cómo obtener la cookie</h2>
+                        <p class="text-muted mb-0">Pasos para copiar tu cookie del Portal del Estudiante.</p>
+                    </div>
+                </div>
+                <h6>Método fácil (extensión, recomendado)</h6>
+                <ol class="list-steps">
+                    <li>Instala <strong>Get cookies.txt LOCALLY</strong> desde la <a href="https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc" target="_blank" rel="noopener">Chrome Web Store</a> (Chrome/Edge) o desde <a href="https://addons.mozilla.org/firefox/addon/get-cookies-txt-locally/" target="_blank" rel="noopener">Add-ons de Firefox</a>.</li>
+                    <li>Inicia sesión en el Portal del Estudiante → Matrícula → Oferta Horaria.</li>
+                    <li>Clic en el icono de la extensión y pulsa <strong>Copy</strong>.</li>
+                    <li>Pega en el campo <strong>Cookie completa</strong> y pulsa <strong>Cargar cursos</strong>.</li>
+                </ol>
+                <h6 class="mt-3">Método manual (DevTools)</h6>
+                <ol class="list-steps">
+                    <li>En la Oferta Horaria abre DevTools (F12) y ve a <strong>Network (Red)</strong>; recarga la página.</li>
+                    <li>Busca una request que empiece con <code>/api/academic/</code> o <code>coursesoffered</code>.</li>
+                    <li>Copia el header <strong>Cookie</strong> completo y pégalo en la web.</li>
+                </ol>
+                <div class="ratio ratio-16x9 video-compact mt-3">
+                    <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/YMp6dyPI2_s" title="Como obtener cookie uc"></iframe>
+                </div>
+                <h6 class="mt-3">Consejos</h6>
+                <ul class="list-check">
+                    <li>La cookie expira. Si falla, vuelve a copiarla.</li>
+                    <li>Evita compartir la cookie con terceros.</li>
+                    <li>La extensión es de código abierto y no envía tus cookies a ningún servidor.</li>
+                </ul>
+            </section>
+        </div>
+
+        <!-- ========== TAB: GUÍA COOKIE ========== -->
+
     </main>
 
+    <!-- Modal: Alerta bloque único -->
+    <div class="modal fade" id="modal-single-block" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div style="font-size:2.5rem; margin-bottom:8px; color:var(--warning-border);"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                    <h6 class="mb-2" id="singleBlockTitle">Solo seleccionaste un bloque</h6>
+                    <p class="text-muted mb-3" id="singleBlockText">Estás seleccionando cursos únicamente del bloque A.</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary px-3" id="singleBlockCancelBtn" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary px-3" id="singleBlockAcceptBtn" data-bs-dismiss="modal">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Cargar cursos con cookie -->
+    <div class="modal fade" id="modal-required-courses" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Carga tus cursos</h5>
+                    <button type="button" class="btn-close" id="requiredCloseBtn" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Pega tu cookie del Portal del Estudiante para traer la oferta del periodo.</p>
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-6">
+                            <label class="form-label">Cookie completa</label>
+                            <textarea id="cookieInputModal" class="form-control" rows="4" placeholder="Pega aquí la cookie (Copia desde la extensión 'Get cookies.txt LOCALLY' o el header Cookie de DevTools)"></textarea>
+                            <div class="form-text">Usa la extensión <strong>Get cookies.txt LOCALLY</strong> y pulsa <em>Copy</em> en la Oferta Horaria. También sirve el header <code>Cookie:</code> de DevTools.</div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <label class="form-label">Periodo</label>
+                            <select id="termInputModal" class="form-select"></select>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 d-grid align-self-end">
+                            <button id="scrapeModalBtn" class="btn btn-primary">Cargar cursos</button>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <div id="scrapeModalProgress" class="progress d-none" style="height:6px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%"></div>
+                        </div>
+                        <p id="scrapeModalMsg" class="text-muted mt-2 mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: recomendación de usar en PC -->
+    <div class="modal fade" id="deviceAlertModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-body p-4 text-center">
+                    <div class="feature-icon mx-auto mb-3"><i class="bi bi-pc-display"></i></div>
+                    <h5 class="fw-bold mb-2">Mejor experiencia en PC</h5>
+                    <p class="text-muted mb-4">Course Scheduler UC está optimizado para computadores. En tablet o celular algunas vistas y funciones se ven reducidas. Te recomendamos usarlo desde una pantalla más grande.</p>
+                    <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/app.js"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import fcntl
 import json
 from pathlib import Path
 from datetime import datetime
@@ -13,9 +14,6 @@ from course_scheduler.scraper_run import build_records
 
 DATA_PATH = Path(__file__).resolve().parent / "data" / "cursos.json"
 
-
-
-
 SESSION_COURSES_DIR = Path(__file__).resolve().parent / "data" / "sessions"
 
 
@@ -24,6 +22,8 @@ def _session_courses_path(session_id: str | None) -> Path:
         return DATA_PATH
     safe = _safe_session_id(session_id)
     return SESSION_COURSES_DIR / f"{safe}_cursos.json"
+
+
 def load_courses(session_id: str | None = None) -> List[Course]:
     courses_path = _session_courses_path(session_id)
     if not courses_path.exists():
@@ -32,7 +32,15 @@ def load_courses(session_id: str | None = None) -> List[Course]:
         data = json.load(f)
     if not isinstance(data, list):
         return []
-    return [Course.from_dict(item) for item in flatten_courses(data) if isinstance(item, dict)]
+    courses: List[Course] = []
+    for item in flatten_courses(data):
+        if not isinstance(item, dict):
+            continue
+        try:
+            courses.append(Course.from_dict(item))
+        except Exception:
+            continue
+    return courses
 
 
 def save_records(records: List[Dict[str, object]], session_id: str | None = None) -> None:
@@ -42,8 +50,46 @@ def save_records(records: List[Dict[str, object]], session_id: str | None = None
         json.dump(records, f, ensure_ascii=False, indent=2)
 
 
+def normalize_cookie(raw: str) -> str:
+    """Normaliza la cookie pegada por el usuario a un header 'Cookie:' estándar.
+
+    Acepta:
+    - Header directo: 'name=value; name2=value2' (con o sin prefijo 'Cookie:').
+    - Formato Netscape cookies.txt (exportado por la extensión
+      'Get cookies.txt LOCALLY'): una línea por cookie, campos separados por
+      tab, donde los últimos dos campos son el nombre y el valor.
+    """
+    text = (raw or "").strip()
+    if not text:
+        return text
+
+    if "\t" not in text and "\n" not in text and "\r" not in text:
+        if text.lower().startswith("cookie:"):
+            text = text.split(":", 1)[1]
+        return text.strip()
+
+    pairs: List[str] = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "\t" in line:
+            parts = line.split("\t")
+            if len(parts) >= 2:
+                name = parts[-2].strip()
+                value = parts[-1].strip()
+                if name:
+                    pairs.append(f"{name}={value}")
+    if pairs:
+        return "; ".join(pairs)
+
+    if text.lower().startswith("cookie:"):
+        text = text.split(":", 1)[1]
+    return "; ".join(part.strip() for part in text.splitlines() if part.strip())
+
+
 def refresh_courses_from_cookie(cookie: str, term: str, session_id: str | None = None) -> Dict[str, object]:
-    result = build_records(term, cookie=cookie)
+    result = build_records(term, cookie=normalize_cookie(cookie))
     records = result.get("records", [])
     if isinstance(records, list):
         save_records(records, session_id=session_id)
@@ -122,11 +168,50 @@ def get_total_visits() -> int:
 
 
 def increment_total_visits() -> int:
-    total = get_total_visits() + 1
     METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(METRICS_PATH, "w", encoding="utf-8") as f:
+    with open(METRICS_PATH, "a+", encoding="utf-8") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        f.seek(0)
+        try:
+            data = json.load(f)
+            total = int(data.get("total_visits", 0)) if isinstance(data, dict) else 0
+        except (json.JSONDecodeError, ValueError):
+            total = 0
+        total += 1
+        f.seek(0)
+        f.truncate()
         json.dump({"total_visits": total}, f, ensure_ascii=False, indent=2)
+        f.flush()
     return total
+
+
+def get_teachers(courses: List[Course]) -> List[Dict[str, object]]:
+    grouped: Dict[str, Dict[str, object]] = {}
+    for course in courses:
+        teacher = (course.teacher or "Sin docente").strip()
+        if not teacher:
+            continue
+        key = teacher.upper()
+        if key not in grouped:
+            grouped[key] = {
+                "name": teacher,
+                "courses": [],
+            }
+        grouped[key]["courses"].append({
+            "course_key": course.course_key() or course.name,
+            "name": course.name,
+            "nrc": course.nrc,
+            "block": course.block,
+            "horarios": [
+                {"dia": s.day, "inicio": s.start, "fin": s.end, "modalidad": s.modality}
+                for s in course.schedules
+            ],
+        })
+    result = list(grouped.values())
+    result.sort(key=lambda x: x["name"])
+    return result
+
+
 def group_course_catalog(courses: List[Course]) -> List[Dict[str, object]]:
     grouped: Dict[str, Dict[str, object]] = {}
     for course in courses:
@@ -241,6 +326,7 @@ def build_schedule_response(selected_a: List[Course], selected_b: List[Course]) 
                     "course_key": course.course_key() or course.name,
                     "name": course.name,
                     "nrc": course.nrc,
+                    "credits": course.credits,
                     "teacher": course.teacher,
                     "block": course.block,
                     "horarios": [
